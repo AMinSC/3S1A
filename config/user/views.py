@@ -41,3 +41,8 @@ class LogoutView(views.APIView):
         response.delete_cookie('refresh')
         response.delete_cookie('access')
         return response
+
+
+# RegisterView = RegisterView.as_view()
+# LoginView = LoginView.as_view()
+# LogoutView = LogoutView.as_view()
