@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Suggested-Playlist</title>
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="../static/css/loading.css">
+
+    <!-- JS -->
+</head>
+<body>
+    <header>
+        <h1>Emotional pop song recommendation</h1>
+        <nav>
+            <ul>
+                <li><a class="menu" href="index.html">Home</a></li>
+                <li><a class="menu" href="#">Player List</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <section>
+            <h2>나만의 감성 음악 가이드를 받아보세요! 시간대를 선택하고 원하시는 바이브를 설명해주세요.</h2>
+            <ul id="answerPoint"></ul>
+            <form action="post" class="answer">
+                <div class="year">
+                    <div class="box box1">여행 갈 년도 선택</div>
+                    <label for="70년대이하"><input type="radio" name="year" id="70년대이하">70년대 이하</label>
+                    <label for="80년대"><input type="radio" name="year" id="80년대">80년대</label>
+                    <label for="90년대"><input type="radio" name="year" id="90년대">90년대</label>
+                    <label for="2000년대"><input type="radio" name="year" id="2000년대">2000년대</label>
+                    <label for="2010년대"><input type="radio" name="year" id="2010년대">2010년대</label>
+                    <label for="2020년대이상"><input type="radio" name="year" id="2020년대이상" checked>2020년대 이상</label>
+                </div>
+                <div class="place">
+                    <div class="text feel">여행 목적</div>
+                    <input id="target" type="text" autofocus placeholder="예 &#41; 드라이브할 때 듣기 좋은, 새벽에 듣기 좋은" />
+                    <button type="submit">Let's go on a trip</button>
+                </div>
+            </form>
+            {% block content %}
+            {% endblock %}
+            <ol id="videoList"></ol>
+        </section>
+    </main>
+    <footer>
+        <p>Copyright &copy; 2023 My Website</p>
+    </footer>
+    <div id="mask">
+        <img class="loading-img" src="../static/image/Infinity-0.8s-200px.gif" alt="로딩이미지">
+    </div>
+    <script src="./src/js/main.js" defer type="module"></script>
+</body>
+</html>
