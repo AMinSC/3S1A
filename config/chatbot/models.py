@@ -1,22 +1,24 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from datetime import datetime
+from post.models import Post
 
 
 User = get_user_model()
 
 class Conversation(models.Model):
-    prompt = models.CharField(max_length=512)
+    title = models.CharField(max_length=200, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    prompt = models.TextField()
     response = models.TextField()
-
-    def __str__(self):
-        return f"{self.prompt}: {self.response}"
-
-
-class Message(models.Model):
-    conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.SET_NULL, null=True)
-    text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Message from {self.sender} at {self.timestamp}'
+        return f"{self. prompt}: {self. response}"
+    
+    def create_post(self, title=None):
+        if not title:
+            title = self.timestamp.strftime('%Y-%m-%d %H:%M')
+        post = Post(conversation=self, title=title, content=self.response, author=self.user)
+        post.save()
+        return post
