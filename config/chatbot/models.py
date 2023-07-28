@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from datetime import datetime
-from post.models import Post
 
 
 User = get_user_model()
@@ -19,6 +18,6 @@ class Conversation(models.Model):
     def create_post(self, title=None):
         if not title:
             title = self.timestamp.strftime('%Y-%m-%d %H:%M')
-        post = Post(conversation=self, title=title, content=self.response, author=self.user)
+        post = Conversation(conversation=self, title=title, content=self.response, author=self.user)
         post.save()
         return post
