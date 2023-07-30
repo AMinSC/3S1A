@@ -6,5 +6,5 @@ urlpatterns = [
     # path('', ),
     path('user/', include('user.urls')),
     path('chatbot/', include('chatbot.urls')),
-    path('post/', include('post.urls')),
+    # path('post/', include('post.urls')),
 ]
