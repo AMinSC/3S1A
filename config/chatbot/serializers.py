@@ -13,3 +13,8 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'title', 'content', 'user']
+
+
+class ConversationSerializer(serializers.Serializer):
+    role = serializers.CharField(max_length=200)
+    prompt = serializers.CharField()
