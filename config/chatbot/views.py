@@ -2,11 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from .models import Conversation,  Message
+from .serializers import ConversationSerializer, MessageSerializer
+
 from decouple import config
 import openai
 
-from .models import Conversation
-from .serializers import ConversationSerializer
 
 openai.api_key = config('OPENAI_API_KEY')
 
@@ -53,31 +55,31 @@ class ChatbotView(APIView):
 
 
 class ConversationList(ListAPIView):
-    serializer_class = ConversationSerializer
+    serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
     def get_queryset(self):
         # 현재 로그인한 사용자의 대화만 반환
-        return Conversation.objects.filter(user=self.request.user)
+        return Message.objects.filter(user=self.request.user)
 
 
 class ConversationDetail(RetrieveAPIView):
-    queryset = Conversation.objects.all()
-    serializer_class = ConversationSerializer
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
     def get_queryset(self):
         # 현재 로그인한 사용자의 대화만 반환
-        return Conversation.objects.filter(user=self.request.user)
+        return Message.objects.filter(user=self.request.user)
 
 
 class ConversationDelete(DestroyAPIView):
-    queryset = Conversation.objects.all()
+    queryset = Message.objects.all()
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
     def get_queryset(self):
         # 현재 로그인한 사용자의 대화만 반환
-        return Conversation.objects.filter(user=self.request.user)
+        return Message.objects.filter(user=self.request.user)
 
 
 ChatbotView = ChatbotView.as_view()
