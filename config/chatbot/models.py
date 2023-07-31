@@ -6,7 +6,7 @@ User = get_user_model()
 
 
 class Conversation(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     prompt = models.TextField()
     response = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -25,4 +25,4 @@ class Conversation(models.Model):
 class Message(models.Model):
     title = models.CharField(max_length=200, blank=True)
     content = models.CharField(max_length=255, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)

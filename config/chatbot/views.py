@@ -10,23 +10,25 @@ from .serializers import ConversationSerializer, MessageSerializer
 from decouple import config
 import openai
 
+import traceback
+import sys
+
 
 openai.api_key = config('OPENAI_API_KEY')
 
 
 class ChatbotView(APIView):
-    def get(self, request, *args, **kwargs):
-        conversations = request.session.get('conversations', [])
-        # return Response({'conversations': conversations})
-        return render(request, 'chatbot/chat.html', {'conversation': conversations})
+    #def get(self, request, *args, **kwargs):
+    #    conversations = request.session.get('conversations', [])
+    #    return Response({'conversations': conversations})
+    #    # return render(request, 'chatbot/chat.html', {'conversation': conversations})
 
     def post(self, request, *args, **kwargs):
-        prompt = request.data.get('content')
+        prompt = request.data.get('prompt')
+        
         if prompt:
             # 이전 대화 기록 가져오기
-            print(f'prompt: {prompt}')
             session_conversations = request.session.get('conversations', [])
-            print(f'session_conversations : {session_conversations}')
             previous_conversations = "\n".join([f"User: {c['prompt']}\nAI: {c['response']}" for c in session_conversations])
             prompt_with_previous = f"{previous_conversations}\nUser: {prompt}\nAI:"
 
@@ -54,9 +56,11 @@ class ChatbotView(APIView):
             session_conversations.append({'prompt': prompt, 'response': response})
             request.session['conversations'] = session_conversations
             request.session.modified = True
+        else:
+            conversation = ''
 
-        # return Response({'conversations': conversations})
-        return self.get(request, *args, **kwargs)
+        return Response({'conversation': conversation})
+        # return self.get(request, *args, **kwargs)
 
 
 class ConversationList(ListAPIView):
