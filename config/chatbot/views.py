@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import render
 
 from .models import Conversation,  Message
-from .serializers import ConversationSerializer, MessageSerializer, ConversationsSerializer
+from .serializers import ConversationSerializer, MessageSerializer
 
 from decouple import config
 import openai
@@ -59,7 +59,6 @@ class ChatbotView(APIView):
                 request.session.modified = True
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                # return Response({'error': 'No data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'conversation': conversation})
 
