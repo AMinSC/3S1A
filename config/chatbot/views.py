@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -10,9 +11,6 @@ from .serializers import ConversationSerializer, MessageSerializer
 from decouple import config
 import openai
 
-import traceback
-import sys
-import json
 
 openai.api_key = config('OPENAI_API_KEY')
 
