@@ -1,10 +1,10 @@
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.shortcuts import render
 
-from .models import Conversation,  Message
+from .models import Message
 from .serializers import ConversationSerializer, MessageSerializer
 
 from decouple import config
@@ -15,19 +15,19 @@ openai.api_key = config('OPENAI_API_KEY')
 
 
 class ChatbotView(APIView):
-    def get(self, request, *args, **kwargs):
-        conversations = request.session.get('conversations', [])
-        # return Response({'conversations': conversations})
-        return render(request, 'chatbot/chat.html', {'conversation': conversations})
 
     def post(self, request, *args, **kwargs):
-        prompt = request.data.get('content')
-        if prompt:
+        print(request.data)
+        conversations = request.data
+
+        session_conversations = request.session.get('conversations', [])
+        
+        for conversation in conversations:
+            role = conversation.get('role')
+            prompt = conversation.get('prompt')
+            
             # 이전 대화 기록 가져오기
-            print(f'prompt: {prompt}')
-            session_conversations = request.session.get('conversations', [])
-            print(f'session_conversations : {session_conversations}')
-            previous_conversations = "\n".join([f"User: {c['prompt']}\nAI: {c['response']}" for c in session_conversations])
+            previous_conversations = "\n".join(f"User: {role}\nAI: {prompt}")
             prompt_with_previous = f"{previous_conversations}\nUser: {prompt}\nAI:"
 
             model_engine = "text-davinci-003"
@@ -47,16 +47,19 @@ class ChatbotView(APIView):
             )
             response = completions.choices[0].text.strip()
 
-            conversation = Conversation(prompt=prompt, response=response)
-            conversation.save()
+            conversation_serializer = MessageSerializer(data={'prompt': prompt, 'response': response})
+
+            if conversation_serializer.is_valid():
+                conversation_serializer.save()
+            else:
+                return Response(conversation_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # 대화 기록에 새로운 응답 추가
-            session_conversations.append({'prompt': prompt, 'response': response})
+            session_conversations.append({'role': 'AI', 'prompt': response})
             request.session['conversations'] = session_conversations
             request.session.modified = True
-
-        # return Response({'conversations': conversations})
-        return self.get(request, *args, **kwargs)
+            
+        return Response({'conversation': session_conversations})
 
 
 class ConversationList(ListAPIView):

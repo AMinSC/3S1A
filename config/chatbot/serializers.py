@@ -3,16 +3,14 @@ from .models import Conversation, Message
 
 
 class ConversationSerializer(serializers.ModelSerializer):
-    role = serializers.CharField(max_length=200)
-    prompt = serializers.CharField()
-    
+
     class Meta:
         model = Conversation
-
+        fields = ['role', 'prompt']
 
 class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'title', 'content', 'user']
+        fields = ['id', 'role', 'prompt']  # , 'user']
 
