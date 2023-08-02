@@ -75,6 +75,7 @@ class ConversationDetail(RetrieveAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
+    lookup_field = 'chatbot_id'  # Message모델 chatbot_id필드가 있다고 가정
 
     def get_queryset(self):
         # 현재 로그인한 사용자의 대화만 반환
