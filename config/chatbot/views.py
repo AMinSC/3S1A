@@ -17,18 +17,24 @@ openai.api_key = config('OPENAI_API_KEY')
 class ChatbotView(APIView):
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
-        conversations = request.data
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"error": "User must be authenticated."}, status=status.HTTP_403_FORBIDDEN)
 
-        session_conversations = request.session.get('conversations', [])
+        conversations_data = request.data.get('conversations', [])
+
+        previous_conversations = []
         
-        for conversation in conversations:
+        for conversation in conversations_data:
             role = conversation.get('role')
             prompt = conversation.get('prompt')
             
             # 이전 대화 기록 가져오기
-            previous_conversations = "\n".join(f"User: {role}\nAI: {prompt}")
-            prompt_with_previous = f"{previous_conversations}\nUser: {prompt}\nAI:"
+            previous_conversations.append(f"{role}: {prompt}")
+
+            previous_conversations_str = "\n".join(previous_conversations)
+
+            prompt_with_previous = f"{previous_conversations_str}\n{role}: {prompt}\nAI:"
 
             model_engine = "text-davinci-003"
             completions = openai.Completion.create(
@@ -47,7 +53,7 @@ class ChatbotView(APIView):
             )
             response = completions.choices[0].text.strip()
 
-            conversation_serializer = MessageSerializer(data={'prompt': prompt, 'response': response})
+            conversation_serializer = MessageSerializer(data={'user': user.id, 'role':role, 'prompt': prompt})
 
             if conversation_serializer.is_valid():
                 conversation_serializer.save()
@@ -55,11 +61,12 @@ class ChatbotView(APIView):
                 return Response(conversation_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             # 대화 기록에 새로운 응답 추가
-            session_conversations.append({'role': 'AI', 'prompt': response})
-            request.session['conversations'] = session_conversations
+            conversations_data.append({'role': 'AI', 'prompt': response})
+
+            request.session['conversations'] = conversations_data
             request.session.modified = True
             
-        return Response({'conversation': session_conversations})
+        return Response({'conversation': conversations_data})
 
 
 class ConversationList(ListAPIView):

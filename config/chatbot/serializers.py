@@ -12,5 +12,5 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'role', 'prompt']  # , 'user']
+        fields = ['user', 'role', 'prompt']
 
