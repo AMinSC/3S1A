@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions, status, views
+from rest_framework import generics, permissions, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -33,10 +33,10 @@ class LoginView(generics.CreateAPIView):
         return Response(res, status=status.HTTP_200_OK)
 
 
-class LogoutView(views.APIView):
+class LogoutView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def delete(self, request, *args, **kwargs):
         # 클라이언트 토큰 삭제
         response = Response({"detail": "Logout Successful"}, status=status.HTTP_200_OK)
         response.delete_cookie('refresh')

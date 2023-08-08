@@ -10,7 +10,7 @@ class User(AbstractUser):
     ]
 
     username = models.CharField(unique=True, max_length=255)
-    email = models.EmailField(unique=True, max_length=255)
+    email = models.EmailField(max_length=255)
     nickname = models.CharField(max_length=100, blank=True, null=True)
     member_status = models.CharField(
         max_length=2,
