@@ -81,7 +81,7 @@ class ConversationList(APIView):
 class ConversationDetail(APIView):
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
-    def get(self, request):
+    def get(self, request, chatbot_id):
         try:
             message = Message.objects.filter(user=request.user).get(chatbot_id=chatbot_id)
         except Message.DoesNotExist:
@@ -94,7 +94,7 @@ class ConversationDetail(APIView):
 class ConversationDelete(APIView):
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
-    def get(self, request):
+    def get(self, request, chatbot_id):
         try:
             message = Message.objects.filter(user=request.user).get(chatbot_id=chatbot_id)
         except Message.DoesNotExist:
