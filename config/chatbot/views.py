@@ -69,33 +69,39 @@ class ChatbotView(APIView):
         return Response({'conversation': conversations_data})
 
 
-class ConversationList(ListAPIView):
-    serializer_class = MessageSerializer
+class ConversationList(APIView):
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
-    def get_queryset(self):
-        # 현재 로그인한 사용자의 대화만 반환
-        return Message.objects.filter(user=self.request.user)
+    def get(self, request):
+        messages = Message.objects.filter(user=request.user)
+        serializer = MessageSerializer(messages, many=True)
+        return Response(Serializer.data)
 
 
-class ConversationDetail(RetrieveAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
-    lookup_field = 'chatbot_id'  # Message모델 chatbot_id필드가 있다고 가정
-
-    def get_queryset(self):
-        # 현재 로그인한 사용자의 대화만 반환
-        return Message.objects.filter(user=self.request.user)
-
-
-class ConversationDelete(DestroyAPIView):
-    queryset = Message.objects.all()
+class ConversationDetail(APIView):
     permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
 
-    def get_queryset(self):
-        # 현재 로그인한 사용자의 대화만 반환
-        return Message.objects.filter(user=self.request.user)
+    def get(self, request):
+        try:
+            message = Message.objects.filter(user=request.user).get(chatbot_id=chatbot_id)
+        except Message.DoesNotExist:
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = MessageSerializer(message)
+        return Response(serializer.data)
+
+
+class ConversationDelete(APIView):
+    permission_classes = [IsAuthenticated]  # 로그인한 사용자만 필요
+
+    def get(self, request):
+        try:
+            message = Message.objects.filter(user=request.user).get(chatbot_id=chatbot_id)
+        except Message.DoesNotExist:
+            return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        message.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 ChatbotView = ChatbotView.as_view()
