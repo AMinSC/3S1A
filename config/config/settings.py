@@ -32,8 +32,8 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-        config('ALLOWED_HOSTS'),
-        'www.s3a1.com',
+        # config('ALLOWED_HOSTS'),
+        "127.0.0.1"
         ]
 
 

@@ -1,11 +1,10 @@
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Message
-from .serializers import ConversationSerializer, MessageSerializer
+from .serializers import MessageSerializer
 
 from decouple import config
 import openai
@@ -75,7 +74,7 @@ class ConversationList(APIView):
     def get(self, request):
         messages = Message.objects.filter(user=request.user)
         serializer = MessageSerializer(messages, many=True)
-        return Response(Serializer.data)
+        return Response(serializer.data)
 
 
 class ConversationDetail(APIView):

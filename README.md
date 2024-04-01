@@ -10,7 +10,7 @@ Share songs suggested by AI
     - Google YouTube IFrame Player API
 
 - [Share-songs-suggested-by-AI](https://github.com/AMinSC/Share-songs-suggested-by-AI)
-    - 서비스 배포 Frond-end
+    - 서비스 Frond-end
     - HTMl, CSS, JavaScript
 
 ## 서비스 목적
